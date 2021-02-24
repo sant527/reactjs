@@ -275,5 +275,15 @@ hooks
    StateWithLabel "text: hello"
    StateWithLabel "params_general_state: [object Object]"
    StateWithLabel "response_state: [object Object]"
-``
+```
 
+
+
+# Why React setState/useState does not update immediately
+
+> React this.setState, and React.useState create queues for React core to update the state object of a React component.
+
+> So the process to update React state is asynchronous for performance reasons. That’s why changes don’t feel immediate.
+
+
+> Think of setState() as a request to update the component. Reading state right after calling setState() a potential pitfall.
