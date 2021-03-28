@@ -287,3 +287,134 @@ hooks
 
 
 > Think of setState() as a request to update the component. Reading state right after calling setState() a potential pitfall.
+> 
+
+
+
+# Reactjs 2 approaches for adding collapsabile in a list of items
+
+## 1) create a customized item (where open state is localized to each component)
+https://material-ui.com/components/tables/#collapsible-table
+
+https://stackoverflow.com/a/65362002
+
+## 2) save the current 'open' state for each of the menus separately
+https://stackoverflow.com/a/55673454
+
+
+## 1) create a customized item (where open state is localized to each component)
+https://material-ui.com/components/tables/#collapsible-table
+
+https://stackoverflow.com/a/65362002
+
+```javascript
+import React, { useState } from 'react'
+
+const CustomizedListItem = ({ doc }) => {
+    const [ open, setOpen ] = useState(false)
+    const handleClick = () => {
+        setOpen(!open)
+    }
+    
+    return (
+        <div>
+            <ListItem button key={doc.Id} onClick={handleClick}>
+                <ListItemText primary={doc.Name} />
+                {open ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse
+                key={doc.Sheets.Id}
+                in={open}
+                timeout='auto'
+                unmountOnExit
+            >
+                <List component='li' disablePadding key={doc.Id}>
+                    {doc.Sheets.map(sheet => {
+                        return (
+                            <ListItem button key={sheet.Id}>
+                                <ListItemIcon>
+                                    {/* <InsertDriveFileTwoToneIcon /> */}
+                                </ListItemIcon>
+                                <ListItemText key={sheet.Id} primary={sheet.Title} />
+                            </ListItem>
+                        )
+                    })}
+                </List>
+            </Collapse>
+            <Divider />
+        </div>
+    )
+}
+
+
+export default function CategoriesResults() {
+    const docs = data.documents  //this coming from a json file
+    return (
+        <div>
+            <List component='nav' aria-labelledby='nested-list-subheader'>
+                {docs.map(doc => {
+                    return (
+                        <CustomizedListItem key={doc.id} doc={doc} />
+                    )
+                })}
+            </List>
+        </div>
+    )
+}
+```
+
+
+
+## 2) save the current 'open' state for each of the menus separately
+https://stackoverflow.com/a/55673454
+
+
+You already have a unique id for your different menus, you can use them in order to achieve your goal. One way would be to extend your state with the related settings for your menus:
+
+```
+state = { settings: [{ id: "1", open: false }, { id: "2", open: false }] };
+```
+
+This allows you to have the information about the collapsed status of each of your menus.
+
+According to that you need to extend your handleClick function a bit in order to only change the state of the menu item you clicked:
+
+```
+handleClick = id => {
+  this.setState(state => ({
+    ...state,
+    settings: state.settings.map(item =>
+      item.id === id ? { ...item, open: !item.open } : item
+    )
+  }));
+};
+```
+
+And in your render function you need to make sure that you pass the right id of the menu item you clicked to your handleClick function and that you select the right open state.
+
+```
+<React.Fragment key={each.id}>
+  <ListItem button onClick={() => this.handleClick(each.id)}>
+    <ListItemText inset primary={each.nameHeader} />
+    settings.find(item => item.id === each.id).open
+    ? "expanded"
+    : "collapsed"}
+  </ListItem>
+  <Divider />
+  <Collapse
+    in={settings.find(item => item.id === each.id).open}
+    timeout="auto"
+    unmountOnExit
+  >
+  <List component="div" disablePadding>
+    {each.subMenu.map(subData => (
+      <ListItem key={subData.id} button>
+        <ListItemText inset primary={subData.name} />
+      </ListItem>
+     ))}
+   </List>
+ </Collapse>
+</React.Fragment>
+```
+
+
