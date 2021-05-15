@@ -503,3 +503,41 @@ Or if you just want to update a property of an item:
             }
         });
         setState({ myArray: myNewArray });
+
+# changing property in all objects in an array
+
+```
+  myArray = myArray.map(arrayElem => {
+    arrayElem.property = newValue
+    return arrayElem
+  })
+```
+You **don't** need `lodash` for this.
+
+<hr/>
+
+The first object is missing your status property and it will be added.
+
+<br>
+
+<h2>SHOWING THREE WAYS HOW YOU CAN DO IT</h2>
+
+<br>
+
+**IMMUTABLE VERSION**  (We create a new array using `map`)
+
+    const arrImmutableVersion = arr.map(e => ({...e, status: "active"}));
+
+ 
+
+**MUTABLE VERSIONS**  (We change the original array)
+
+    arr.forEach((el)=>{el.status = "active";}) 
+
+ or
+
+    arr.forEach(function(el){el.status = "active";}) 
+
+ 
+
+
